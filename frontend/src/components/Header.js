@@ -13,22 +13,22 @@ const navigation = [
 
 export default function Header() {
   const [description, setDescription] = useState("");
-  const [results, setResults] = useState([]);
+  const [ads, setAds] = useState("");
 
-  async function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    // const response = await axios.post("http://localhost:4000/api/generate", {
-    //   description: description,
-    // });
-
-    const response = await axios.post("http://localhost:4000/api/generate");
-
-    
-
-    // setResults(response.data);
-    console.log(response.data);
-  }
+    axios
+      .post("http://localhost:3000/generate-ad", {
+        description,
+      })
+      .then((response) => {
+        setAds(response.data.ad);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
     <div className="">
@@ -174,10 +174,10 @@ export default function Header() {
                     onChange={(event) => setDescription(event.target.value)}
                     placeholder="Start typing...."
                     rows={4}
-                    className="block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                    className="block bg-gray-800 text-gray-100 w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-                <div className="pt-6">
+                <div className="pt-6 pb-1">
                   <button
                     type="submit"
                     className="inline-flex items-center px-5 py-2 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -188,10 +188,9 @@ export default function Header() {
               </div>
             </form>
 
-            {results.map((result, index) => (
+            {/* {ads.map((result, index) => (
               <p key={index}>{result}</p>
-            ))}
-
+            ))} */}
           </div>
         </main>
       </div>
