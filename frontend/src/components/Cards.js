@@ -11,8 +11,7 @@ const posts = [
       "Lsxdycfugvihbjnk mkl,amet consectetur adipisicing elit. Architecto accusantium praesentium eius, ut atque fuga culpa, similique sequi cum eos quis dolorum.",
   },
   {
-    description:
-      "How to use search engine optimization to drive sales",
+    description: "How to use search engine optimization to drive sales",
   },
 ];
 

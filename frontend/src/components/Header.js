@@ -1,6 +1,8 @@
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -10,6 +12,24 @@ const navigation = [
 ];
 
 export default function Header() {
+  const [description, setDescription] = useState("");
+  const [results, setResults] = useState([]);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    // const response = await axios.post("http://localhost:4000/api/generate", {
+    //   description: description,
+    // });
+
+    const response = await axios.post("http://localhost:4000/api/generate");
+
+    
+
+    // setResults(response.data);
+    console.log(response.data);
+  }
+
   return (
     <div className="">
       <div className="relative overflow-hidden">
@@ -141,30 +161,37 @@ export default function Header() {
               engaging Advertisement titles for you
             </p>
 
-            <div className="max-w-md mx-auto mt-8">
-              <div>
-                <label htmlFor="description" className="sr-only">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  placeholder="Start typing...."
-                  rows={4}
-                  className="block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
-                  defaultValue={""}
-                />
+            <form onSubmit={handleSubmit}>
+              <div className="max-w-md mx-auto mt-8">
+                <div>
+                  <label htmlFor="description" className="sr-only">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    placeholder="Start typing...."
+                    rows={4}
+                    className="block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div className="pt-6">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center px-5 py-2 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Generate Results
+                  </button>
+                </div>
               </div>
-            </div>
+            </form>
 
-            <div className="pt-6">
-              <button
-                type="button"
-                className="inline-flex items-center px-5 py-2 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Generate
-              </button>
-            </div>
+            {results.map((result, index) => (
+              <p key={index}>{result}</p>
+            ))}
+
           </div>
         </main>
       </div>
