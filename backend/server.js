@@ -8,14 +8,14 @@ app.use(cors());
 app.use(express.json());
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
 const generateAd = async (productDescription) => {
   const response = await openai.createCompletion({
     model: "text-davinci-002",
-    prompt: `Write five creative ad for the following product to run on Facebook aimed at parents:\n\nProduct: ${productDescription}`,
+    prompt: `Write five advertisement for the following product \n\nProduct: ${productDescription}`,
     temperature: 0.5,
     max_tokens: 100,
     top_p: 1.0,

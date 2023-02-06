@@ -6,7 +6,7 @@ const metrics = [
   
   export default function Metrics() {
     return (
-      <div className="relative bg-gray-900">
+      <div className="relative bg-gray-900 ">
         <div className="h-80 w-full absolute bottom-0 xl:inset-0 xl:h-full">
           <div className="h-full w-full xl:grid xl:grid-cols-2">
             <div className="h-full xl:relative xl:col-start-2">

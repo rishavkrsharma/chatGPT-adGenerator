@@ -1,8 +1,10 @@
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "./Loader";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -12,22 +14,33 @@ const navigation = [
 ];
 
 export default function Header() {
-  const [description, setDescription] = useState("");
-  const [ads, setAds] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [showLoader, setShowLoader] = useState(false);
+  const [ads, setAds] = useState([]);
 
-  const handleSubmit = (event) => {
+  const handleChange = (event) => {
+    setProductDescription(event.target.value);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Successfully Copied!");
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    axios
-      .post("http://localhost:3000/generate-ad", {
-        description,
-      })
-      .then((response) => {
-        setAds(response.data.ad);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    setShowLoader(true);
+    const response = await fetch(`http://localhost:3000/generate-ad`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ productDescription }),
+    });
+    
+    const data = await response.json();
+    setAds(data.ad);
+  
   };
 
   return (
@@ -170,14 +183,14 @@ export default function Header() {
                   <textarea
                     id="description"
                     name="description"
-                    value={description}
-                    onChange={(event) => setDescription(event.target.value)}
+                    value={productDescription}
+                    onChange={handleChange}
                     placeholder="Start typing...."
                     rows={4}
                     className="block bg-gray-800 text-gray-100 w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-                <div className="pt-6 pb-1">
+                <div className="pt-6 pb-8">
                   <button
                     type="submit"
                     className="inline-flex items-center px-5 py-2 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -187,11 +200,52 @@ export default function Header() {
                 </div>
               </div>
             </form>
-
-            {/* {ads.map((result, index) => (
-              <p key={index}>{result}</p>
-            ))} */}
           </div>
+
+          {/* CARDS */}
+          {ads[0] ? (
+            <div className="relative bg-gray-900 pt-10 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
+              <div className="absolute inset-0">
+                <div className="bg-gray-900 h-1/3 sm:h-2/3" />
+              </div>
+              <div className="relative max-w-7xl mx-auto">
+                <div className="text-center">
+                  <h2 className="text-3xl tracking-tight font-extrabold text-gray-100 sm:text-4xl">
+                    Here's the Results
+                  </h2>
+                  <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                    The results are based on the values provided by user
+                  </p>
+                </div>
+
+                <div className="mt-12 max-w-lg mx-auto grid gap-5 lg:grid-cols-1 lg:max-w-none">
+                  <div className="flex flex-col rounded-lg shadow-lg overflow-hidden">
+                    <div className="flex-1 bg-gray-800 p-6 flex flex-col justify-between">
+                      <div className="flex-1">
+                        <p className="mt-3 text-base text-gray-200">{ads}</p>
+                      </div>
+                      <div className="mt-6 flex items-center">
+                        <div className="flex-shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              copyToClipboard(ads);
+                            }}
+                            className="inline-flex items-center px-12 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          >
+                            Copy to clipboard
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ToastContainer />
+            </div>
+          ) : (
+            showLoader && <Loader />
+          )}
         </main>
       </div>
     </div>
